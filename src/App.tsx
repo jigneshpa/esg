@@ -43,19 +43,6 @@ const App = () => {
     <ChakraProvider theme={theme}>
       <Provider store={store}>
         <PersistGate
-          loading={
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                height: '100vh',
-                fontSize: '16px'
-              }}
-            >
-              Loading persisted state...
-            </div>
-          }
           persistor={persistor}
           onBeforeLift={() => {
             console.log('=== PERSIST BEFORE LIFT ===');
@@ -64,12 +51,27 @@ const App = () => {
             console.log('=== END PERSIST BEFORE LIFT ===');
           }}
         >
-          {() => {
+          {(bootstrapped) => {
+            if (!bootstrapped) {
+              return (
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: '100vh',
+                    fontSize: '16px'
+                  }}
+                >
+                  Loading persisted state...
+                </div>
+              );
+            }
+
             console.log('=== PERSIST AFTER LIFT ===');
             console.log('App: PersistGate lifted - state restored');
             debugAuthState();
 
-            // Additional check: Verify the store state after rehydration
             const state = store.getState();
             console.log('Store state after rehydration:', {
               user: state.user,
